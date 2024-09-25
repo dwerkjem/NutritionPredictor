@@ -1,0 +1,50 @@
+\documentclass{article}
+
+\title{Notes On Data}
+\author{Derek R Neilson}
+\date{\today}
+
+\usepackage{graphicx} % For including images
+\usepackage{amsmath}  % For mathematical expressions
+\usepackage{hyperref} % For hyperlinks
+\usepackage{booktabs} % For better tables
+\usepackage{listings} % For including code snippets
+\usepackage{url}      % For URLs
+\usepackage{xcolor} % For color definitions
+
+% Set global listings settings (optional)
+\lstset{
+    language=bash,
+    basicstyle=\ttfamily\small, % Use a monospaced font
+    xleftmargin=0pt,            % Remove left margin
+    frame=single,               % Add a frame around the code
+    breaklines=true,            % Allow line breaking
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}, % Indicate line breaks
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  This document contains notes on the data. The notes are intended to demonstrate how I filter and manipulate the data, and are purely for my instructor to review.
+\end{abstract}
+
+\section{Introduction}
+
+In data analysis, the ability to effectively filter and manipulate data is crucial for extracting meaningful insights. This document outlines the methodologies and tools I employ to pre-process and analyze the dataset. The primary focus is on cleaning the data, handling missing values, and transforming data to suit the analytical objectives. These notes serve as a comprehensive guide for understanding my data processing workflow.
+
+\section{Data Collection}
+The data was collected from \url{https://fdc.nal.usda.gov/}. The dataset is 2.9GB and is labeled \texttt{Branded} and is in JSON format. I chose this dataset because it is large and one can assume that it has the most rows because it is so large. 
+
+To download the data, I used the following commands: 
+
+\begin{lstlisting}
+wget https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_csv_2024-04-18.zip
+unzip FoodData_Central_branded_food_csv_2024-04-18.zip 
+\end{lstlisting}
+
+
+
+\end{document}
+
