@@ -8,19 +8,24 @@
 \usepackage{amsmath}  % For mathematical expressions
 \usepackage{hyperref} % For hyperlinks
 \usepackage{booktabs} % For better tables
-\usepackage{listings} % For including code snippets
 \usepackage{url}      % For URLs
-\usepackage{xcolor} % For color definitions
+\usepackage{listings}   % For code listings
+\usepackage{xcolor}     % For custom colors (optional)
 
-% Set global listings settings (optional)
 \lstset{
-    language=bash,
-    basicstyle=\ttfamily\small, % Use a monospaced font
-    xleftmargin=0pt,            % Remove left margin
-    frame=single,               % Add a frame around the code
-    breaklines=true,            % Allow line breaking
-    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}, % Indicate line breaks
-}
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{orange},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    frame=single,
+    breaklines=true,
+    captionpos=b,        % Position of the caption (b=below, t=top)
+    language=bash        % Specify the language for syntax highlighting
 
 \begin{document}
 
@@ -39,11 +44,24 @@ The data was collected from \url{https://fdc.nal.usda.gov/}. The dataset is 2.9G
 
 To download the data, I used the following commands: 
 
-\begin{lstlisting}
-wget https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_csv_2024-04-18.zip
-unzip FoodData_Central_branded_food_csv_2024-04-18.zip 
+
+\
+baegin{lstlisting}[caption={Download, Extract, and Remove Dataset File}, label={lst:download_extract}]
+wget https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2024-04-18.zip
+unzip FoodData_Central_branded_food_json_2024-04-18.zip 
+rm FoodData_Central_branded_food_json_2024-04-18.zip
 \end{lstlisting}
 
+As shown in Listing~\ref{lst:download_extract}, the commands download, extract, and remove the dataset file.
+
+It is worth noteing that I am using git to track changes in the code and data. The git commands will not be shown in this documen for brevity sake.
+
+\section{Data Inspection}
+I receved the following files after extracting:
+  \begin{itemize}
+    \item \texttt{brandedDownload.json} I am assuming that this is the main file
+    \item \texttt{foundationDownload.json} I am assuming that this is a supporting file
+  \end{itemize}
 
 
 \end{document}
