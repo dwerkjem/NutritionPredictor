@@ -1,3 +1,3 @@
+import requests
+import dotenv
 import pandas as pd
-
-Data = pd.read_csv("")

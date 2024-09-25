@@ -1,6 +1,5 @@
 *.aux
 *.lof
-*.log
 *.lot
 *.fls
 *.out
@@ -40,3 +39,6 @@
 *.pdfsync
 *.rubbercache
 rubber.cache
+
+.env
+.venv

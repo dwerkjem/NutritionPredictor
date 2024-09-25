@@ -1,0 +1,2 @@
+pandas==2.2.3 # https://pandas.pydata.org/docs/
+python-dotenv==1.0.1 # https://pypi.org/project/python-dotenv/

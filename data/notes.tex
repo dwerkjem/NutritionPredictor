@@ -4,16 +4,25 @@
 \author{Derek R Neilson}
 \date{\today}
 
-\usepackage{graphicx} % For including images
-\usepackage{amsmath}  % For mathematical expressions
-\usepackage{hyperref} % For hyperlinks
-\usepackage{booktabs} % For better tables
-\usepackage{url}      % For URLs
-\usepackage{listings}   % For code listings
-\usepackage{xcolor}     % For custom colors (optional)
+\usepackage{geometry}    % Adjust margins
+\usepackage{graphicx}    % For including images
+\usepackage{amsmath}     % For mathematical expressions
+\usepackage{hyperref}    % For hyperlinks
+\usepackage{booktabs}    % For better tables
+\usepackage{url}         % For URLs
+\usepackage{listings}    % For code listings
+\usepackage{xcolor}      % For custom colors (optional)
+\usepackage{hyphenat}    % For hyphenation
 
+% Adjust margins
+\geometry{
+    a4paper,
+    margin=1in
+}
+
+% Enhanced lstlisting settings for better multi-line support
 \lstset{
-    basicstyle=\ttfamily\small,
+    basicstyle=\ttfamily\small,          % Use a smaller font size
     keywordstyle=\color{blue},
     commentstyle=\color{gray},
     stringstyle=\color{orange},
@@ -23,9 +32,21 @@
     numbersep=5pt,
     backgroundcolor=\color{white},
     frame=single,
-    breaklines=true,
-    captionpos=b,        % Position of the caption (b=below, t=top)
-    language=bash        % Specify the language for syntax highlighting
+    breaklines=true,                     % Allow line breaking
+    breakatwhitespace=false,            % Allow breaks at any character
+    breakautoindent=true,
+    breakindent=0pt,
+    columns=flexible,                    % Better alignment
+    keepspaces=true,                     % Preserve spaces
+    showstringspaces=false,              % Don't show spaces in strings
+    tabsize=4,                           % Set tab size
+    captionpos=b,                        % Position of the caption (b=below, t=top)
+    language=bash,                       % Specify the language for syntax highlighting
+    morekeywords={wget, unzip, rm},       % Add any additional keywords if needed
+    literate={/}{/}1{.}{.}1{-}{-}1{_}{\_}1,  % Allow breaks after / . - _
+    breakindent=10pt,                    % Indent broken lines
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}  % Symbol indicating a line break
+}
 
 \begin{document}
 
@@ -44,9 +65,7 @@ The data was collected from \url{https://fdc.nal.usda.gov/}. The dataset is 2.9G
 
 To download the data, I used the following commands: 
 
-
-\
-baegin{lstlisting}[caption={Download, Extract, and Remove Dataset File}, label={lst:download_extract}]
+\begin{lstlisting}[caption={Download, Extract, and Remove Zip File}, label={lst:download_extract}]
 wget https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2024-04-18.zip
 unzip FoodData_Central_branded_food_json_2024-04-18.zip 
 rm FoodData_Central_branded_food_json_2024-04-18.zip
@@ -54,15 +73,68 @@ rm FoodData_Central_branded_food_json_2024-04-18.zip
 
 As shown in Listing~\ref{lst:download_extract}, the commands download, extract, and remove the dataset file.
 
-It is worth noteing that I am using git to track changes in the code and data. The git commands will not be shown in this documen for brevity sake.
+It is worth noting that I am using git to track changes in the code and data. The git commands will not be shown in this document for brevity.
 
 \section{Data Inspection}
-I receved the following files after extracting:
+I received the following files after extracting:
   \begin{itemize}
-    \item \texttt{brandedDownload.json} I am assuming that this is the main file
-    \item \texttt{foundationDownload.json} I am assuming that this is a supporting file
+    \item \texttt{brandedDownload.json} - I am assuming that this is the main file
+    \item \texttt{foundationDownload.json} - I am assuming that this is a supporting file
   \end{itemize}
 
+The first step to inspecting the data is to view it.
 
+\begin{lstlisting}[caption={View the Data}, label={lst:view_data}]
+less brandedDownload.json # the output is too large to show here and is not useful
+# I am going to use jq to view the data
+jq . brandedDownload.json # this results in a segmentation fault because the file is too large
+# I am going to use a stonger server to veiw the data 
+# For security resons, the ip address and username are redacted
+sftp -P port username@ip_address
+put brandedDownload.json DEV/Project/Data
+put foundationDownload.json DEV/Project/Data
+bye
+ssh username@ip_address -P port
+\end{lstlisting}
+
+As shown in Listing~\ref{lst:view_data}, the file is too large to view on my local machine. I will use a stronger server to view the data. Note that there is a assumption that all commands that follow are run on the server. From here on, I will refer to the server as being the machine that I am using to view the data. To get the data on the server, I used sftp to transfer the file to the server. 
+
+\begin{lstlisting}[caption={View the Data on the Server}, label={lst:view_data_server}]
+jq . brandedDownload.json | less # failed because the file is too large
+jq --stream . brandedDownload.json | less # this works because it streams the data
+jq --stream . foundationDownload.json | less
+
+\end{lstlisting}
+
+After looking at the head of the data, I can see that the data is in unstructured JSON format. I will use the CSV data insted. The JSON data will not be included in this document for size reasons.
+
+\section{Data Collection (CSV)}
+\begin{lstlisting}[caption={Download, Extract, and Remove Zip File}, label={lst:download_extract_csv}]
+rm brandedDownload.json foundationDownload.json # remove the JSON files
+wget https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_csv_2024-04-18.zip # download the CSV file
+unzip FoodData_Central_branded_food_csv_2024-04-18.zip # unzip the file
+mv FoodData_Central_branded_food_csv_2024-04-18/* . # move the files to the current directory
+\end{lstlisting}
+As shown in Listing~\ref{lst:download_extract_csv}, the commands download, extract, and remove the dataset file in CSV format. I will use the CSV data for the rest of the analysis.
+
+\begin{lstlisting}[caption={list the files}, label={lst:list_files}]
+total 2853M
+-rw-r--r-- 1 derek derek  870M Apr  5 12:07 branded_food.csv
+drwxr-xr-x 3 derek derek    1M Sep 26 09:01 build
+-rw-r--r-- 1 derek derek    1M Apr  5 12:12 Download API Field Descriptions.xlsx
+-rw-r--r-- 1 derek derek  123M Apr  5 12:18 food_attribute.csv
+-rw-r--r-- 1 derek derek    1M Apr  5 12:09 food_attribute_type.csv
+-rw-r--r-- 1 derek derek  351M Apr  5 12:18 food.csv
+-rw-r--r-- 1 derek derek 1387M Apr  5 12:23 food_nutrient.csv
+-rw-r--r-- 1 derek derek  124M Apr  5 12:18 food_update_log_entry.csv
+-rw-r--r-- 1 derek derek    1M Sep 25 19:22 makecsv.py
+-rw-r--r-- 1 derek derek    1M Apr  5 12:09 measure_unit.csv
+-rw-r--r-- 1 derek derek    1M Apr  5 12:08 microbe.csv
+-rw-r--r-- 1 derek derek    1M Sep 26 08:10 notes.tex
+-rw-r--r-- 1 derek derek    1M Apr  5 12:08 nutrient.csv
+-rw-rw-r-- 1 derek derek    1M Apr  5 12:12 nutrient_incoming_name.csv
+-rw-r--r-- 1 derek derek    0M Sep 26 09:05 sizes.log
+\end{lstlisting}
+I then looked at the head of each csv file to see what was in the files. I will not include the output here for brevity. \texttt{head -n 1 *.csv}. The only file that I am interested in is \texttt{branded\_food.csv}. I will use this file for the rest of the analysis. But I also noticed that none of the files had caloric information. As a result, I will use a external dataset to get the caloric information. From a quick search, I found a api \url{https://platform.fatsecret.com/platform-api}. I will use this api to get the caloric information for each food. It dose cost money to use this api so I will calculate the cost of using this api before I use it. I stord the key in a external file called \texttt{.env}. I will not include the key in this document for security reasons. I will use a python script to get the caloric information for each food. The script is not shown in this document refer to the \texttt{makecsv.py} file for the script. At this time I will make a virtual environment to run the script. \texttt{python3.12 -m venv .venv} and \texttt{source .venv/bin/activate}.
 \end{document}
 
