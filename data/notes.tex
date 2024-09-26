@@ -106,7 +106,7 @@ jq --stream . foundationDownload.json | less
 
 \end{lstlisting}
 
-After looking at the head of the data, I can see that the data is in unstructured JSON format. I will use the CSV data insted. The JSON data will not be included in this document for size reasons.
+After looking at the head of the data, I can see that the data is in unstructured JSON format. I will use the CSV data instead. The JSON data will not be included in this document for size reasons.
 
 \section{Data Collection (CSV)}
 \begin{lstlisting}[caption={Download, Extract, and Remove Zip File}, label={lst:download_extract_csv}]
@@ -135,6 +135,8 @@ drwxr-xr-x 3 derek derek    1M Sep 26 09:01 build
 -rw-rw-r-- 1 derek derek    1M Apr  5 12:12 nutrient_incoming_name.csv
 -rw-r--r-- 1 derek derek    0M Sep 26 09:05 sizes.log
 \end{lstlisting}
-I then looked at the head of each csv file to see what was in the files. I will not include the output here for brevity. \texttt{head -n 1 *.csv}. The only file that I am interested in is \texttt{branded\_food.csv}. I will use this file for the rest of the analysis. But I also noticed that none of the files had caloric information. As a result, I will use a external dataset to get the caloric information. From a quick search, I found a api \url{https://platform.fatsecret.com/platform-api}. I will use this api to get the caloric information for each food. It dose cost money to use this api so I will calculate the cost of using this api before I use it. I stord the key in a external file called \texttt{.env}. I will not include the key in this document for security reasons. I will use a python script to get the caloric information for each food. The script is not shown in this document refer to the \texttt{makecsv.py} file for the script. At this time I will make a virtual environment to run the script. \texttt{python3.12 -m venv .venv} and \texttt{source .venv/bin/activate}.
+I then looked at the head of each CSV file to see what was in the files. I will not include the output here for brevity. \texttt{head -n 1 *.csv}. The only file that I am interested in is \texttt{branded\_food.csv}. I will use this file for the rest of the analysis. But I also noticed that none of the files had caloric information. As a result, I will use a external dataset to get the caloric information. From a quick search, I found a api \url{https://platform.fatsecret.com/platform-api}. I will use this api to get the caloric information for each food. It dose cost money to use this API so I will calculate the cost of using this API before I use it. I stored the key in a external file called \texttt{.env}. I will not include the key in this document for security reasons. I will use a python script to get the caloric information for each food. At this time I will make a virtual environment to run the script. \texttt{python3.12 -m venv .venv} and \texttt{source .venv/bin/activate}. I will keep track of any dependencies that I use in a \texttt{requirements.txt} file. The next step is to validate the data. 
+
+
 \end{document}
 
