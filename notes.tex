@@ -1,0 +1,128 @@
+
+\documentclass{report} % Changed from 'article' to 'report'
+
+\title{Notes On Data}
+\author{Derek R Neilson}
+\date{\today}
+
+\usepackage{geometry}    % Adjust margins
+\usepackage{graphicx}    % For including images
+\usepackage{amsmath}     % For mathematical expressions
+\usepackage{hyperref}    % For hyperlinks
+\usepackage{booktabs}    % For better tables
+\usepackage{url}         % For URLs
+\usepackage{listings}    % For code listings
+\usepackage{xcolor}      % For custom colors (optional)
+\usepackage{hyphenat}    % For hyphenation
+
+% Adjust margins
+\geometry{
+    a4paper,
+    margin=1in
+}
+
+% Base style for all listings
+\lstdefinestyle{baseStyle}{
+    basicstyle=\ttfamily\small,          % Use a smaller monospace font
+    numbers=left,                        % Line numbers on the left
+    numberstyle=\tiny\color{gray},       % Style for line numbers
+    stepnumber=1,                        % Number every line
+    numbersep=5pt,                       % Space between numbers and code
+    backgroundcolor=\color{white},       % Background color
+    frame=single,                        % Single frame around code
+    breaklines=true,                     % Allow line breaking
+    breakatwhitespace=false,            % Allow breaks at any character
+    breakautoindent=true,
+    breakindent=10pt,                    % Indent for broken lines
+    columns=flexible,                    % Better alignment
+    keepspaces=true,                     % Preserve spaces
+    showstringspaces=false,              % Don't show spaces in strings
+    tabsize=4,                           % Set tab size
+    captionpos=b,                        % Caption below the listing
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}, % Symbol indicating a line break
+    literate={/}{/}1{.}{.}1{-}{-}1{_}{\_}1,  % Allow breaks after / . - _
+}
+
+% Style for Python
+\lstdefinestyle{pythonStyle}{
+    style=baseStyle,                     % Inherit from baseStyle
+    language=Python,                     % Set language
+    keywordstyle=\color{blue}\bfseries,  % Keywords in blue bold
+    commentstyle=\color{gray}\itshape,   % Comments in gray italic
+    stringstyle=\color{orange},          % Strings in orange
+    morekeywords={self, cls, async, await}, % Additional Python keywords
+}
+
+% Style for R
+\lstdefinestyle{rStyle}{
+    style=baseStyle,
+    language=R,
+    keywordstyle=\color{purple}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    morekeywords={<-},                   % Assignment operator in R
+}
+
+% Style for Bash
+\lstdefinestyle{bashStyle}{
+    style=baseStyle,
+    language=bash,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{orange},
+    morekeywords={wget, unzip, rm, sftp, ssh, put, bye}, % Additional Bash keywords
+}
+
+% Style for SQL (as an example of another data science-related language)
+\lstdefinestyle{sqlStyle}{
+    style=baseStyle,
+    language=SQL,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{orange},
+    morekeywords={SELECT, FROM, WHERE, INSERT, UPDATE, DELETE, JOIN, INNER, OUTER},
+}
+
+% Style for Julia
+\lstdefinestyle{juliaStyle}{
+    style=baseStyle,
+    language=Julia,
+    keywordstyle=\color{teal}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{magenta},
+    morekeywords={end, function, using, import},
+}
+
+% Style for MATLAB
+\lstdefinestyle{matlabStyle}{
+    style=baseStyle,
+    language=Matlab,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{orange},
+    morekeywords={function, end, if, else, for, while},
+}
+
+% Style for LaTeX code
+\lstdefinestyle{latexStyle}{
+    style=baseStyle,
+    language=TeX,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{orange},
+    morekeywords={\documentclass, \usepackage, \begin, \end, \section, \subsection},
+}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  This document contains notes on the data. The notes are intended to demonstrate how I filter and manipulate the data. The primary focus is on cleaning the data, handling missing values, and transforming data to suit the analytical objectives. These notes serve as a comprehensive guide for understanding my data processing workflow. 
+\end{abstract}
+
+\input{data/notes.tex}
+
+\end{document}
+
