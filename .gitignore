@@ -42,3 +42,5 @@ rubber.cache
 
 .env
 .venv
+cleaned_openfoodfacts.csv
+data.csv

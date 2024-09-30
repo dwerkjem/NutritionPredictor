@@ -1,71 +1,16 @@
-\documentclass{article}
-
-\title{Notes On Data}
-\author{Derek R Neilson}
-\date{\today}
-
-\usepackage{geometry}    % Adjust margins
-\usepackage{graphicx}    % For including images
-\usepackage{amsmath}     % For mathematical expressions
-\usepackage{hyperref}    % For hyperlinks
-\usepackage{booktabs}    % For better tables
-\usepackage{url}         % For URLs
-\usepackage{listings}    % For code listings
-\usepackage{xcolor}      % For custom colors (optional)
-\usepackage{hyphenat}    % For hyphenation
-
-% Adjust margins
-\geometry{
-    a4paper,
-    margin=1in
-}
-
-% Enhanced lstlisting settings for better multi-line support
-\lstset{
-    basicstyle=\ttfamily\small,          % Use a smaller font size
-    keywordstyle=\color{blue},
-    commentstyle=\color{gray},
-    stringstyle=\color{orange},
-    numbers=left,
-    numberstyle=\tiny\color{gray},
-    stepnumber=1,
-    numbersep=5pt,
-    backgroundcolor=\color{white},
-    frame=single,
-    breaklines=true,                     % Allow line breaking
-    breakatwhitespace=false,            % Allow breaks at any character
-    breakautoindent=true,
-    breakindent=0pt,
-    columns=flexible,                    % Better alignment
-    keepspaces=true,                     % Preserve spaces
-    showstringspaces=false,              % Don't show spaces in strings
-    tabsize=4,                           % Set tab size
-    captionpos=b,                        % Position of the caption (b=below, t=top)
-    language=bash,                       % Specify the language for syntax highlighting
-    morekeywords={wget, unzip, rm},       % Add any additional keywords if needed
-    literate={/}{/}1{.}{.}1{-}{-}1{_}{\_}1,  % Allow breaks after / . - _
-    breakindent=10pt,                    % Indent broken lines
-    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}  % Symbol indicating a line break
-}
-
-\begin{document}
-
-\maketitle
-
-\begin{abstract}
-  This document contains notes on the data. The notes are intended to demonstrate how I filter and manipulate the data, and are purely for my instructor to review.
-\end{abstract}
-
-\section{Introduction}
+\chapter{Data Collection and Inspection}
+\section{Data Collection} 
+\subsection{Introduction}
 
 In data analysis, the ability to effectively filter and manipulate data is crucial for extracting meaningful insights. This document outlines the methodologies and tools I employ to pre-process and analyze the dataset. The primary focus is on cleaning the data, handling missing values, and transforming data to suit the analytical objectives. These notes serve as a comprehensive guide for understanding my data processing workflow.
 
-\section{Data Collection}
+\subsection{Data Collection}
+
 The data was collected from \url{https://fdc.nal.usda.gov/}. The dataset is 2.9GB and is labeled \texttt{Branded} and is in JSON format. I chose this dataset because it is large and one can assume that it has the most rows because it is so large. 
 
 To download the data, I used the following commands: 
 
-\begin{lstlisting}[caption={Download, Extract, and Remove Zip File}, label={lst:download_extract}]
+\begin{lstlisting}[style=bashStyle, caption={Download, Extract, and Remove Zip File}, label={lst:download_extract}]
 wget https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2024-04-18.zip
 unzip FoodData_Central_branded_food_json_2024-04-18.zip 
 rm FoodData_Central_branded_food_json_2024-04-18.zip
@@ -84,12 +29,12 @@ I received the following files after extracting:
 
 The first step to inspecting the data is to view it.
 
-\begin{lstlisting}[caption={View the Data}, label={lst:view_data}]
+\begin{lstlisting}[style=bashStyle, caption={View the Data}, label={lst:view_data}]
 less brandedDownload.json # the output is too large to show here and is not useful
 # I am going to use jq to view the data
 jq . brandedDownload.json # this results in a segmentation fault because the file is too large
-# I am going to use a stonger server to veiw the data 
-# For security resons, the ip address and username are redacted
+# I am going to use a stronger server to view the data 
+# For security reasons, the IP address and username are redacted
 sftp -P port username@ip_address
 put brandedDownload.json DEV/Project/Data
 put foundationDownload.json DEV/Project/Data
@@ -97,9 +42,9 @@ bye
 ssh username@ip_address -P port
 \end{lstlisting}
 
-As shown in Listing~\ref{lst:view_data}, the file is too large to view on my local machine. I will use a stronger server to view the data. Note that there is a assumption that all commands that follow are run on the server. From here on, I will refer to the server as being the machine that I am using to view the data. To get the data on the server, I used sftp to transfer the file to the server. 
+As shown in Listing~\ref{lst:view_data}, the file is too large to view on my local machine. I will use a stronger server to view the data. Note that there is an assumption that all commands that follow are run on the server. From here on, I will refer to the server as being the machine that I am using to view the data. To get the data on the server, I used `sftp` to transfer the files to the server.
 
-\begin{lstlisting}[caption={View the Data on the Server}, label={lst:view_data_server}]
+\begin{lstlisting}[style=bashStyle, caption={View the Data on the Server}, label={lst:view_data_server}]
 jq . brandedDownload.json | less # failed because the file is too large
 jq --stream . brandedDownload.json | less # this works because it streams the data
 jq --stream . foundationDownload.json | less
@@ -109,7 +54,7 @@ jq --stream . foundationDownload.json | less
 After looking at the head of the data, I can see that the data is in unstructured JSON format. I will use the CSV data instead. The JSON data will not be included in this document for size reasons.
 
 \section{Data Collection (CSV)}
-\begin{lstlisting}[caption={Download, Extract, and Remove Zip File}, label={lst:download_extract_csv}]
+\begin{lstlisting}[style=bashStyle, caption={Download, Extract, and Remove Zip File (CSV)}, label={lst:download_extract_csv}]
 rm brandedDownload.json foundationDownload.json # remove the JSON files
 wget https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_csv_2024-04-18.zip # download the CSV file
 unzip FoodData_Central_branded_food_csv_2024-04-18.zip # unzip the file
@@ -117,27 +62,7 @@ mv FoodData_Central_branded_food_csv_2024-04-18/* . # move the files to the curr
 \end{lstlisting}
 As shown in Listing~\ref{lst:download_extract_csv}, the commands download, extract, and remove the dataset file in CSV format. I will use the CSV data for the rest of the analysis.
 
-\begin{lstlisting}[caption={list the files}, label={lst:list_files}]
-total 2853M
--rw-r--r-- 1 derek derek  870M Apr  5 12:07 branded_food.csv
-drwxr-xr-x 3 derek derek    1M Sep 26 09:01 build
--rw-r--r-- 1 derek derek    1M Apr  5 12:12 Download API Field Descriptions.xlsx
--rw-r--r-- 1 derek derek  123M Apr  5 12:18 food_attribute.csv
--rw-r--r-- 1 derek derek    1M Apr  5 12:09 food_attribute_type.csv
--rw-r--r-- 1 derek derek  351M Apr  5 12:18 food.csv
--rw-r--r-- 1 derek derek 1387M Apr  5 12:23 food_nutrient.csv
--rw-r--r-- 1 derek derek  124M Apr  5 12:18 food_update_log_entry.csv
--rw-r--r-- 1 derek derek    1M Sep 25 19:22 makecsv.py
--rw-r--r-- 1 derek derek    1M Apr  5 12:09 measure_unit.csv
--rw-r--r-- 1 derek derek    1M Apr  5 12:08 microbe.csv
--rw-r--r-- 1 derek derek    1M Sep 26 08:10 notes.tex
--rw-r--r-- 1 derek derek    1M Apr  5 12:08 nutrient.csv
--rw-rw-r-- 1 derek derek    1M Apr  5 12:12 nutrient_incoming_name.csv
--rw-r--r-- 1 derek derek    0M Sep 26 09:05 sizes.log
-\end{lstlisting}
-I then looked at the head of each CSV file to see what was in the files. I will not include the output here for brevity. \texttt{head -n 1 *.csv}. The only file that I am interested in is \texttt{branded\_food.csv}. I will use this file for the rest of the analysis. But I also noticed that none of the files had caloric information. As a result, I will use a external dataset to get the caloric information. From a quick search, I found a api \url{https://platform.fatsecret.com/platform-api}. I will use this api to get the caloric information for each food. It dose cost money to use this API so I will calculate the cost of using this API before I use it. I stored the key in a external file called \texttt{.env}. I will not include the key in this document for security reasons. I will use a python script to get the caloric information for each food. At this time I will make a virtual environment to run the script. \texttt{python3.12 -m venv .venv} and \texttt{source .venv/bin/activate}. I will keep track of any dependencies that I use in a \texttt{requirements.txt} file. The next step is to validate the data. 
-
-\begin{lstlisting}[caption={Validate the Data}, label={lst:validate_data}]
+\begin{lstlisting}[style=pythonStyle, caption={Validate the Data}, label={lst:validate_data}]
 import requests
 import dotenv
 import pandas as pd
@@ -246,71 +171,11 @@ if "calories" in data.columns:
 
 print("\n--- Final Data Shape ---")
 print(data.shape)
-
 \end{lstlisting}
+
+% Continue with other sections and listings...
 
 The code in Listing~\ref{lst:validate_data} performs the following tasks:
-  \begin{itemize}
-      \item Load the data from the CSV file
-      \item Check the data types of each column
-      \item Identify and handle missing values
-      \item Identify and remove duplicate rows
-      \item Display summary statistics of the data
-      \item Detect and optionally remove outliers using Z-Score
-      \item Validate categorical data
-      \item Ensure data consistency and integrity
-  \end{itemize}
-It is nondestructive and will not change the data. The next step is to clean the data. 
-
-\begin{lstlisting}[caption={Clean the CSV}, label={lst:Cleancsv}]
-import pandas as pd
-import dotenv
-import os
-
-# Load environment variables (if applicable)
-dotenv.load_dotenv()
-
-# Path to your CSV file
-csv_file_path = "branded_food.csv"
-
-# Check if the file exists
-if not os.path.isfile(csv_file_path):
-    raise FileNotFoundError(f"The file {csv_file_path} does not exist.")
-
-# Load the CSV data into a pandas DataFrame
-try:
-    data = pd.read_csv(csv_file_path)
-    print("Data loaded successfully.")
-except Exception as e:
-    print(f"An error occurred while loading the data: {e}")
-    raise
-
-# Calculate the percentage of missing values per column
-missing_percentage = (data.isnull().sum() / len(data)) * 100
-print("\n--- Percentage of Missing Values ---")
-print(missing_percentage)
-
-# Define the threshold for missing values
-threshold = 90  # in percentage
-
-# Identify columns to drop
-columns_to_drop = missing_percentage[missing_percentage > threshold].index
-print("\nColumns to be dropped (>90% missing values):")
-print(columns_to_drop.tolist())
-
-# Drop the columns with >90% missing values
-data_cleaned = data.drop(columns=columns_to_drop)
-print(f"\nData shape after dropping columns: {data_cleaned.shape}")
-
-# Define the path for the cleaned CSV
-cleaned_csv_path = "branded_food_cleaned.csv"
-
-# Save the cleaned DataFrame to a new CSV
-data_cleaned.to_csv(cleaned_csv_path, index=False)
-print(f"\nCleaned data saved to '{cleaned_csv_path}'.")
-\end{lstlisting}
-
-The code in Listing~\ref{lst:Cleancsv} performs the following tasks:
   \begin{itemize}
       \item Load the data from the CSV file
       \item Calculate the percentage of missing values per column
@@ -318,7 +183,13 @@ The code in Listing~\ref{lst:Cleancsv} performs the following tasks:
       \item Drop columns with more than 90\% missing values
       \item Save the cleaned data to a new CSV file
   \end{itemize}
-The cleaned data is saved to a new CSV file called \texttt{branded\_food\_cleaned.csv}. The next step is to analyze the data. 
+The cleaned data is saved to a new CSV file called \texttt{branded\_food\_cleaned.csv}. The next step is to analyze the data. The resons for dropping columns with more than 90\% missing values is that they are not useful for this type of anlaysis and add unnecessary noise to the data.
 
-\end{document}
+\section{Re-evaluate Data source}
 
+I found the data source at \url{https://fdc.nal.usda.gov/} to be insufficient for my analysis. The data is missing key information such as the source of the data. I will look for a new data source. After a bit of research, I found a new data source at \url{https://www.nutritionix.com/database} that has the data I need. I will use this data source for the rest of the analysis. I will download the data and inspect it as I did with the previous data source. I noticed that there are quotation marks in the data. I will remove them.
+
+\begin{lstlisting}[style=bashStyle, caption={Remove Quotation Marks}, label={lst:remove_quotation}]
+tr -d "\"'" < openfoodfacts.csv > cleaned_openfoodfacts.csv
+\end{lstlisting}
+As shown in Listing~\ref{lst:remove_quotation}, the command removes the quotation marks from the file \texttt{openfoodfacts.csv} and saves the cleaned data to \texttt{cleaned\_openfoodfacts.csv}. I will use the cleaned data for the rest of the analysis. I then trimed the data to 100,000 rows just to see what we are working with see Listing \texit{trim.py} 
